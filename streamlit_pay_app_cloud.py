@@ -179,10 +179,10 @@ else:
     h = header_df.iloc[0]
 
     def num(x):
-        import pandas as pd, numpy as np
-        # convert strings like "12,318,155" and NaN safely
-        v = pd.to_numeric(pd.Series([str(x).replace(",", "")]), errors="coerce").fillna(0.0).iloc[0]
-        return float(v)
+    import pandas as pd, numpy as np
+    # convert strings like "12,318,155" and NaN safely
+    v = pd.to_numeric(pd.Series([str(x).replace(",", "")]), errors="coerce").fillna(0.0).iloc[0]
+    return float(v)
 
     contract = num(h.get("original_contract_amount"))
     earned = num(h.get("submitted_total_earned_to_date"))
