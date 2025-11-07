@@ -177,9 +177,18 @@ if header_df.empty:
     st.error("Header data is empty. Upload header CSV or parse from PDF.")
 else:
     h = header_df.iloc[0]
-    contract = float(h.get("original_contract_amount") or 0)
-    earned = float(h.get("submitted_total_earned_to_date") or items_df["to_date_amount"].sum())
-    retain_rate = float(h.get("retainage_rate_percent") or 0) / 100.0
+
+    def num(x):
+        import pandas as pd, numpy as np
+        # convert strings like "12,318,155" and NaN safely
+        v = pd.to_numeric(pd.Series([str(x).replace(",", "")]), errors="coerce").fillna(0.0).iloc[0]
+        return float(v)
+
+    contract = num(h.get("original_contract_amount"))
+    earned = num(h.get("submitted_total_earned_to_date"))
+    retain_rate = num(h.get("retainage_rate_percent")) / 100.0
+    reviewed_amt = num(h.get("reviewed_amount_this_app"))
+
     percent_complete = round((earned / contract) * 100.0, 2) if contract else 0.0
     retain_to_date = round(earned * retain_rate, 2)
 
@@ -189,7 +198,7 @@ else:
     c2.metric("Earned to Date (Submitted)", money(earned))
     c3.metric("% Complete", f"{percent_complete}%")
     c4.metric("Retainage to Date", money(retain_to_date))
-    c5.metric("Reviewed Amount (This App)", money(h.get("reviewed_amount_this_app") or 0))
+    c5.metric("Reviewed Amount (This App)", money(reviewed_amt))
 
 # Filters and table
 st.subheader("Line Items")
