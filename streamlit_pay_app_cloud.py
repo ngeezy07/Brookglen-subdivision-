@@ -9,15 +9,16 @@ st.set_page_config(page_title="Pay App Prototype", layout="wide")
 
 # ---------- Loaders ----------
 @st.cache_data
-def load_csv(path: str):
-    try:
-        return pd.read_csv(path)
-    except Exception:
-        return pd.DataFrame()
+def load_default_header():
+    df = load_csv("pay_app_header_latest.csv")
+    if df is None or (hasattr(df, "empty") and df.empty):
+        df = load_csv("pay_app_header.csv")
+    return df
 
 @st.cache_data
-def load_default_header():
-    return load_csv("pay_app_header_latest.csv") or load_csv("pay_app_header.csv")
+def load_default_items():
+    df = load_csv("pay_app_items_seed.csv")
+    return df
 
 @st.cache_data
 def load_default_items():
